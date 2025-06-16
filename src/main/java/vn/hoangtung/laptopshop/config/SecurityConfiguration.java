@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 import jakarta.servlet.DispatcherType;
 import vn.hoangtung.laptopshop.service.CustomUserDetailsService;
@@ -88,6 +89,21 @@ public class SecurityConfiguration {
                                                 .successHandler(customSuccessHandler())
                                                 .permitAll())
                                 .exceptionHandling(ex -> ex.accessDeniedPage("/acess-deny"));
+                return http.build();
+        }
+
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                                "/v3/api-docs/**",
+                                                                "/swagger-ui/**",
+                                                                "/swagger-ui.html")
+                                                .permitAll()
+                                                .anyRequest().authenticated())
+                                .formLogin(withDefaults());
+
                 return http.build();
         }
 }

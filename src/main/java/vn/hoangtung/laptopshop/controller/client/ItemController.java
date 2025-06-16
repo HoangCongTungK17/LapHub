@@ -1,7 +1,10 @@
 package vn.hoangtung.laptopshop.controller.client;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -166,22 +169,19 @@ public class ItemController {
             // TODO: handle exception
         }
 
-        // check sort price;
-        Pageable pageable = PageRequest.of(page - 1, 12);
+        // check sort price
+        Pageable pageable = PageRequest.of(page - 1, 30);
 
-        if (productCriteriaDTO.getSort() != null &&
-                productCriteriaDTO.getSort().isPresent()) {
+        if (productCriteriaDTO.getSort() != null && productCriteriaDTO.getSort().isPresent()) {
             String sort = productCriteriaDTO.getSort().get();
             if (sort.equals("gia-tang-dan")) {
-                pageable = PageRequest.of(page - 1, 10, Sort.by(Product_.PRICE).ascending());
+                pageable = PageRequest.of(page - 1, 30, Sort.by(Product_.PRICE).ascending());
             } else if (sort.equals("gia-giam-dan")) {
-                pageable = PageRequest.of(page - 1, 10,
-                        Sort.by(Product_.PRICE).descending());
+                pageable = PageRequest.of(page - 1, 30, Sort.by(Product_.PRICE).descending());
             }
         }
 
-        Page<Product> prs = this.productService.fetchProductsWithSpec(pageable,
-                productCriteriaDTO);
+        Page<Product> prs = this.productService.fetchProductsWithSpec(pageable, productCriteriaDTO);
 
         List<Product> products = prs.getContent().size() > 0 ? prs.getContent()
                 : new ArrayList<Product>();
@@ -198,5 +198,4 @@ public class ItemController {
         model.addAttribute("queryString", qs);
         return "client/product/show";
     }
-
 }
